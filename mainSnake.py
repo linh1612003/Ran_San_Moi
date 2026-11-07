@@ -6,7 +6,6 @@ import os
 
 pygame.init()
 
-# Cấu hình kích thước bàn chơi
 CELL_SIZE = 26
 GRID_WIDTH = 24
 GRID_HEIGHT = 20
@@ -15,7 +14,6 @@ TOP_PANEL = 64
 WIDTH = CELL_SIZE * GRID_WIDTH
 HEIGHT = CELL_SIZE * GRID_HEIGHT + TOP_PANEL
 
-# Bảng màu
 BG_COLOR = (20, 24, 33)
 BOARD_BG = (26, 31, 44)
 GRID_LINE_COLOR = (33, 40, 56)
@@ -36,7 +34,6 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Rắn Săn Mồi - Snake Master")
 clock = pygame.time.Clock()
 
-# Tự động nạp font hệ thống hỗ trợ Tiếng Việt
 def get_vietnamese_font(size, bold=False):
     candidate_fonts = ["segoeui", "arial", "tahoma", "dejavusans", "roboto", "helvetica"]
     for font_name in candidate_fonts:
@@ -50,7 +47,6 @@ font_md = get_vietnamese_font(24)
 font_lg = get_vietnamese_font(32, bold=True)
 font_xl = get_vietnamese_font(48, bold=True)
 
-# Quản lý bảng xếp hạng tách biệt theo từng độ khó
 LEADERBOARD_FILE = "snake_leaderboard.json"
 
 DEFAULT_LEADERBOARD = {
@@ -82,13 +78,12 @@ def save_leaderboard(data):
 class SnakeGame:
     def __init__(self):
         self.leaderboard = load_leaderboard()
-        self.state = "HOME"  # HOME, PLAYING, GAME_OVER
+        self.state = "HOME"
         
-        # Cấu hình thời gian di chuyển giữa 2 ô (tính theo mili-giây, số càng nhỏ càng nhanh)
         self.speeds_preset = {
-            "CHẬM": 140,   # ~7 ô/giây
-            "VỪA": 85,     # ~12 ô/giây
-            "NHANH": 55    # ~18 ô/giây
+            "CHẬM": 140,   
+            "VỪA": 85,     
+            "NHANH": 55    
         }
         self.selected_difficulty = "VỪA"
         self.move_interval = self.speeds_preset[self.selected_difficulty]
@@ -118,11 +113,10 @@ class SnakeGame:
                 return pos
 
     def add_input_direction(self, new_dir):
-        # Xác định hướng tham chiếu để không quay ngược 180 độ
         ref_dir = self.direction_queue[-1] if self.direction_queue else self.direction
         if (new_dir[0] != -ref_dir[0] or new_dir[0] == 0) and \
            (new_dir[1] != -ref_dir[1] or new_dir[1] == 0):
-            if len(self.direction_queue) < 2:  # Đệm tối đa 2 lệnh bấm
+            if len(self.direction_queue) < 2:  
                 self.direction_queue.append(new_dir)
 
     def update(self):
@@ -130,13 +124,11 @@ class SnakeGame:
             return
 
         current_time = pygame.time.get_ticks()
-        # Chỉ cập nhật vị trí rắn khi đủ chu kỳ mili-giây quy định
         if current_time - self.last_move_time < self.move_interval:
             return
 
         self.last_move_time = current_time
 
-        # Lấy hướng tiếp theo từ hàng đợi nếu có
         if self.direction_queue:
             self.direction = self.direction_queue.pop(0)
 
@@ -144,10 +136,8 @@ class SnakeGame:
         dx, dy = self.direction
         new_head = (head_x + dx, head_y + dy)
 
-        # Va chạm biên hoặc cắn vào thân
         if not (0 <= new_head[0] < GRID_WIDTH and 0 <= new_head[1] < GRID_HEIGHT) or new_head in self.snake:
             self.state = "GAME_OVER"
-            # Cập nhật riêng cho bảng xếp hạng của chế độ hiện tại
             mode_lb = self.leaderboard[self.selected_difficulty]
             mode_lb.append(self.score)
             self.leaderboard[self.selected_difficulty] = sorted(list(set(mode_lb)), reverse=True)[:5]
@@ -156,7 +146,6 @@ class SnakeGame:
 
         self.snake.insert(0, new_head)
 
-        # Xử lý ăn mồi
         if new_head == self.food:
             self.score += 10
             self.food = self.spawn_food()
@@ -172,7 +161,6 @@ class SnakeGame:
         sub = font_md.render("Chọn cấp độ (Phím 1, 2, 3 hoặc Click):", True, TEXT_COLOR)
         screen.blit(sub, (WIDTH // 2 - sub.get_width() // 2, 105))
 
-        # Hiển thị 3 nút tốc độ
         diffs = [("1. Chậm", "CHẬM"), ("2. Vừa", "VỪA"), ("3. Nhanh", "NHANH")]
         mouse_pos = pygame.mouse.get_pos()
         self.btn_rects = []
@@ -192,7 +180,6 @@ class SnakeGame:
             txt = font_md.render(label, True, ACCENT_COLOR if is_active else TEXT_COLOR)
             screen.blit(txt, (rect.centerx - txt.get_width() // 2, rect.centery - txt.get_height() // 2))
 
-        # Khung bảng xếp hạng riêng biệt theo mức độ đang chọn
         lb_box = pygame.Rect(WIDTH // 2 - 180, 215, 360, 240)
         pygame.draw.rect(screen, PANEL_COLOR, lb_box, border_radius=12)
         pygame.draw.rect(screen, GRID_LINE_COLOR, lb_box, 1, border_radius=12)
@@ -223,7 +210,6 @@ class SnakeGame:
         board_rect = pygame.Rect(0, TOP_PANEL, WIDTH, HEIGHT - TOP_PANEL)
         pygame.draw.rect(screen, BOARD_BG, board_rect)
 
-        # Thanh thông số bên trên
         pygame.draw.rect(screen, PANEL_COLOR, (0, 0, WIDTH, TOP_PANEL))
         pygame.draw.line(screen, GRID_LINE_COLOR, (0, TOP_PANEL), (WIDTH, TOP_PANEL), 2)
 
@@ -237,7 +223,6 @@ class SnakeGame:
         high_txt = font_md.render(f"Kỷ lục: {max(high_score, self.score)}", True, TEXT_COLOR)
         screen.blit(high_txt, (WIDTH - high_txt.get_width() - 20, 18))
 
-        # Đường lưới
         for x in range(GRID_WIDTH + 1):
             px = x * CELL_SIZE
             pygame.draw.line(screen, GRID_LINE_COLOR, (px, TOP_PANEL), (px, HEIGHT), 1)
@@ -245,7 +230,6 @@ class SnakeGame:
             py = TOP_PANEL + y * CELL_SIZE
             pygame.draw.line(screen, GRID_LINE_COLOR, (0, py), (WIDTH, py), 1)
 
-        # Vẽ mồi ăn
         fx, fy = self.food
         cx = fx * CELL_SIZE + CELL_SIZE // 2
         cy = TOP_PANEL + fy * CELL_SIZE + CELL_SIZE // 2
@@ -255,7 +239,6 @@ class SnakeGame:
         screen.blit(glow_surf, (cx - CELL_SIZE, cy - CELL_SIZE))
         pygame.draw.circle(screen, FOOD_COLOR, (cx, cy), CELL_SIZE // 2 - 2)
 
-        # Vẽ rắn
         for i, (sx, sy) in enumerate(self.snake):
             rect = pygame.Rect(
                 sx * CELL_SIZE + 2,
@@ -281,7 +264,6 @@ class SnakeGame:
                 pygame.draw.circle(screen, (20, 20, 20), e1, eye_r)
                 pygame.draw.circle(screen, (20, 20, 20), e2, eye_r)
 
-        # Màn Game Over
         if self.state == "GAME_OVER":
             overlay = pygame.Surface((WIDTH, HEIGHT - TOP_PANEL), pygame.SRCALPHA)
             overlay.fill((10, 12, 16, 215))
@@ -351,7 +333,6 @@ def main():
 
         game.update()
         game.draw()
-        # Chạy cố định ở 60 FPS để xử lý sự kiện tức thời, không bị khựng phím
         clock.tick(60)
 
     pygame.quit()
