@@ -29,5 +29,5 @@ py -m pip install pygame-ce
 ```
 3. Khởi chạy game:
 ```bash
-python mainSnake.py
+py mainSnake.py
 ```
