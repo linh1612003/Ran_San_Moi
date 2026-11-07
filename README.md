@@ -1,14 +1,22 @@
-# Game Cờ Caro 2 Người (Python)
+# Rắn Săn Mồi - Snake Master (Python)
 
-Trò chơi Cờ Caro 2 người chơi với giao diện đồ họa Pygame mượt mà.
+Trò chơi Rắn Săn Mồi cổ điển với giao diện đồ họa Pygame hiện đại, mượt mà ở tốc độ 60 FPS và hỗ trợ hiển thị Tiếng Việt đầy đủ.
 
 ### Đặc điểm & Luật chơi:
-- **Kích thước bàn cờ:** 20x20 ô (rộng rãi, chuẩn bàn cờ thi đấu thực tế).
-- **Luật phân định thắng bại:** Đạt đủ 5 quân liên tiếp (ngang, dọc, chéo).
-- **Luật chặn 2 đầu:** Nếu chuỗi 5 quân bị đối thủ **chặn cả 2 đầu mút** thì **không tính là thắng**.
-- **Tính điểm & Tỉ số:** Hiển thị tỉ số trận đấu giữa Player X và Player O qua từng ván.
-- **Nút "Ván mới":** Bắt đầu ván mới mà vẫn giữ nguyên tỉ số tổng.
-- **Hiển thị trực quan:** Viền vàng đánh dấu nước cờ gần nhất, highlight màu xanh lá chuỗi 5 quân chiến thắng.
+- **Kích thước bàn chơi:** Lưới 24x20 ô (mỗi ô 26px) cùng thanh hiển thị thông số phía trên.
+- **3 Cấp độ khó:** Tùy chọn tốc độ di chuyển linh hoạt trước khi vào ván:
+  - **Chậm:** ~7 ô/giây (140ms/bước)
+  - **Vừa:** ~12 ô/giây (85ms/bước)
+  - **Nhanh:** ~18 ô/giây (55ms/bước)
+- **Điều khiển mượt mà:** Hỗ trợ bộ đệm lệnh bấm phím (Input Queue), giúp chuyển hướng nhanh liên tiếp mà không bị khựng phím hay lỗi tự cắn vào cổ.
+- **Tính điểm & Luật va chạm:** Mỗi mồi ăn được cộng **10 điểm**. Trò chơi kết thúc khi rắn đâm vào tường biên hoặc tự cắn vào thân.
+- **Bảng xếp hạng riêng biệt:** Tự động lưu trữ Top 5 điểm cao nhất cho từng cấp độ khó vào file `snake_leaderboard.json`.
+- **Hiển thị trực quan:** Mồi ăn có hiệu ứng phát sáng (glow), đầu rắn có mắt xoay theo hướng di chuyển.
+
+### Phím điều khiển:
+- **Tại Menu chính:** Nhấn phím `1`, `2`, `3` (hoặc click chuột) để chọn độ khó. Nhấn `SPACE` hoặc `ENTER` để bắt đầu.
+- **Trong khi chơi:** Dùng các phím mũi tên (`↑`, `↓`, `←`, `→`) hoặc cụm phím `W`, `A`, `S`, `D` để điều hướng. Nhấn `ESC` để quay về Menu chính.
+- **Khi Game Over:** Nhấn `SPACE` để chơi lại ngay hoặc `ESC` để về Menu chính.
 
 ---
 
@@ -17,9 +25,9 @@ Trò chơi Cờ Caro 2 người chơi với giao diện đồ họa Pygame mư�
 1. Đảm bảo máy đã cài **Python 3.10+** (hỗ trợ tốt nhất các bản Python mới nhất).
 2. Mở terminal / command prompt tại thư mục project:
 ```bash
-pip install -r requirements.txt
+py -m pip install pygame-ce
 ```
 3. Khởi chạy game:
 ```bash
-python main.py
+python mainSnake.py
 ```
